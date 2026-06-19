@@ -239,11 +239,9 @@ const fetchWeather = async (lat, lon, locationName = 'Ubicación') => {
     console.warn('Error en APIs estándar:', error);
   }
 
-  // Fallback final a datos simulados
   return generateMockWeatherData(latitude, longitude, locationName);
 };
 
-// 3. PANTALLA DE INICIO (HomeScreen)
 function HomeScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [visibleCount, setVisibleCount] = useState(100);
@@ -372,7 +370,6 @@ function HomeScreen({ navigation }) {
   );
 }
 
-// 4. PANTALLA DEL CLIMA (WeatherScreen)
 function WeatherScreen({ route, navigation }) {
   const { latitude, longitude, name, municipio } = route.params;
   const [weatherData, setWeatherData] = useState(null);
@@ -431,7 +428,6 @@ function WeatherScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.weatherBg}>
       <StatusBar barStyle="dark-content" backgroundColor="#e2e8f0" />
-      {/* Header */}
       <View style={styles.weatherHeader}>
         <TouchableOpacity style={styles.headerButton} onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={24} color="#1e293b" />
@@ -454,13 +450,11 @@ function WeatherScreen({ route, navigation }) {
           </View>
         )}
 
-        {/* Clima Actual */}
         <View style={styles.currentWeatherContainer}>
           <Image source={{ uri: getWeatherIconUrl(current.icon) }} style={styles.weatherIcon} />
           <Text style={styles.tempText}>{current.temp}°</Text>
           <Text style={styles.descText}>{current.description}</Text>
 
-          {/* Detalles */}
           <View style={styles.extraInfoContainer}>
             <View style={styles.extraInfoItem}>
               <Ionicons name="water-outline" size={20} color="#475569" />
@@ -482,7 +476,6 @@ function WeatherScreen({ route, navigation }) {
           </View>
         </View>
 
-        {/* Pronóstico por Horas */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Próximas horas</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hourlyContainer}>
@@ -496,7 +489,6 @@ function WeatherScreen({ route, navigation }) {
           </ScrollView>
         </View>
 
-        {/* Pronóstico por Días */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Próximos días</Text>
           <View style={styles.dailyContainer}>
@@ -522,7 +514,6 @@ function WeatherScreen({ route, navigation }) {
   );
 }
 
-// 5. PANTALLA DE DETALLE (DetailScreen)
 function DetailScreen({ route, navigation }) {
   const { municipio } = route.params;
 
@@ -544,7 +535,6 @@ function DetailScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.detailContainer}>
       <StatusBar barStyle="dark-content" backgroundColor="#f8fafc" />
-      {/* Header */}
       <View style={styles.detailHeader}>
         <TouchableOpacity style={styles.headerButton} onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={24} color="#0f172a" />
@@ -561,7 +551,6 @@ function DetailScreen({ route, navigation }) {
           <Text style={styles.comunidadName}>{municipio.Comunidad}</Text>
         </View>
 
-        {/* Mapa */}
         <View style={styles.mapCard}>
           {Platform.OS === 'web' ? (
             <WebView
@@ -593,7 +582,6 @@ function DetailScreen({ route, navigation }) {
           )}
         </View>
 
-        {/* Población */}
         <View style={styles.infoCard}>
           <Text style={styles.infoCardTitle}>Población total: {formatNumber(total)}</Text>
           
@@ -635,7 +623,6 @@ function DetailScreen({ route, navigation }) {
           )}
         </View>
 
-        {/* Datos geográficos */}
         <View style={styles.detailsCard}>
           <Text style={styles.detailsCardTitle}>Datos Geográficos</Text>
           <View style={styles.detailRow}>
@@ -664,7 +651,6 @@ function DetailScreen({ route, navigation }) {
   );
 }
 
-// 6. ENTRADA PRINCIPAL Y CONFIGURACIÓN DE NAVEGACIÓN
 const StackNavigator = createStackNavigator();
 
 export default function App() {
@@ -684,9 +670,8 @@ export default function App() {
   );
 }
 
-// 7. ESTILOS COMBINADOS
+
 const styles = StyleSheet.create({
-  // HomeScreen Styles
   homeContainer: {
     flex: 1,
     backgroundColor: '#f8fafc',
@@ -795,7 +780,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 
-  // WeatherScreen Styles
   weatherBg: {
     flex: 1,
     backgroundColor: '#f1f5f9',
@@ -1042,7 +1026,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
 
-  // DetailScreen Styles
   detailContainer: {
     flex: 1,
     backgroundColor: '#f8fafc',
