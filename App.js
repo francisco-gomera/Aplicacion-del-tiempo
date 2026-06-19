@@ -675,6 +675,7 @@ const styles = StyleSheet.create({
   homeContainer: {
     flex: 1,
     backgroundColor: '#f8fafc',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   homeHeader: {
     paddingHorizontal: 20,
@@ -783,6 +784,7 @@ const styles = StyleSheet.create({
   weatherBg: {
     flex: 1,
     backgroundColor: '#f1f5f9',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   loadingContainer: {
     flex: 1,
@@ -1029,6 +1031,7 @@ const styles = StyleSheet.create({
   detailContainer: {
     flex: 1,
     backgroundColor: '#f8fafc',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   detailHeader: {
     flexDirection: 'row',
