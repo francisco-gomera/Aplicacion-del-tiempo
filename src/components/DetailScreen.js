@@ -12,7 +12,7 @@ import {
   Linking
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import MapView, { Marker } from 'react-native-maps';
+import { WebView } from 'react-native-webview';
 
 export default function DetailScreen({ route, navigation }) {
   const { municipio } = route.params;
@@ -79,41 +79,14 @@ export default function DetailScreen({ route, navigation }) {
         </View>
 
         <View style={styles.mapCard}>
-          {Platform.OS === 'web' ? (
-            <View style={styles.webMapContainer}>
-              <Ionicons name="map" size={48} color="#94a3b8" />
-              <Text style={styles.webMapText}>Mapa del municipio</Text>
-              <Text style={styles.webMapSubtext}>
-                Latitud: {latitude.toFixed(6)} • Longitud: {longitude.toFixed(6)}
-              </Text>
-              <TouchableOpacity 
-                style={styles.webMapButton}
-                activeOpacity={0.7}
-                onPress={() => Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`)}
-              >
-                <Ionicons name="logo-google" size={16} color="#ffffff" style={{ marginRight: 6 }} />
-                <Text style={styles.webMapButtonText}>Ver en Google Maps</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <MapView
-              style={styles.map}
-              initialRegion={{
-                latitude: latitude,
-                longitude: longitude,
-                latitudeDelta: 0.03,
-                longitudeDelta: 0.03,
-              }}
-              scrollEnabled={true}
-              zoomEnabled={true}
-            >
-              <Marker
-                coordinate={{ latitude, longitude }}
-                title={municipio.Población}
-                description={`${municipio.Provincia}, ${municipio.Comunidad}`}
-              />
-            </MapView>
-          )}
+          <WebView
+            style={styles.map}
+            source={{ 
+              uri: `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=15/${latitude}/${longitude}` 
+            }}
+            domStorageEnabled={true}
+            javaScriptEnabled={true}
+          />
         </View>
 
         <View style={styles.infoCard}>
@@ -264,43 +237,6 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
-  },
-  webMapContainer: {
-    flex: 1,
-    backgroundColor: '#f1f5f9',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  webMapText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#334155',
-    marginTop: 10,
-  },
-  webMapSubtext: {
-    fontSize: 12,
-    color: '#64748b',
-    marginTop: 4,
-    marginBottom: 14,
-  },
-  webMapButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#2563eb',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-    shadowColor: '#2563eb',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  webMapButtonText: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: '600',
   },
   infoCard: {
     backgroundColor: '#ffffff',
