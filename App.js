@@ -20,18 +20,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { WebView } from 'react-native-webview';
+import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 
-// 1. CONFIGURACIÓN Y BASE DE DATOS
-const API_KEY = process.env.EXPO_PUBLIC_OPENWEATHER_API_KEY || 'bb2977856afbad78594fc37dfa819fa6';
+const API_KEY = 'bb2977856afbad78594fc37dfa819fa6';
 const municipiosData = require('./municipios.json');
 
-// Ordenar alfabéticamente
 const sortedMunicipios = [...municipiosData].sort((a, b) =>
   a.Población.localeCompare(b.Población, 'es', { sensitivity: 'base' })
 );
 
-// Auxiliar para parsear coordenadas
 const parseCoordinate = (coord) => {
   if (typeof coord === 'number') return coord;
   if (typeof coord === 'string') {
@@ -40,13 +38,11 @@ const parseCoordinate = (coord) => {
   return 0;
 };
 
-// Auxiliar para iconos de OpenWeather
 const getWeatherIconUrl = (iconCode) => {
   if (!iconCode) return 'https://openweathermap.org/img/wn/10d@2x.png';
   return `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
 };
 
-// Encontrar el municipio más cercano (para localización por GPS)
 const findClosestMunicipio = (lat, lon) => {
   let closest = null;
   let minDistance = Infinity;
@@ -62,7 +58,6 @@ const findClosestMunicipio = (lat, lon) => {
   return closest;
 };
 
-// 2. SERVICIO DE CLIMA (Con fallback resiliente)
 const generateMockWeatherData = (lat, lon, locationName = 'Ubicación') => {
   const seed = (Math.abs(lat) + Math.abs(lon)) % 10;
   const currentTemp = Math.round(15 + seed + Math.random() * 5);
@@ -122,8 +117,6 @@ const generateMockWeatherData = (lat, lon, locationName = 'Ubicación') => {
 const fetchWeather = async (lat, lon, locationName = 'Ubicación') => {
   const latitude = parseCoordinate(lat);
   const longitude = parseCoordinate(lon);
-
-  // Intentar OneCall API
   try {
     const oneCallUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&units=metric&exclude=minutely&lang=es&appid=${API_KEY}`;
     const response = await fetch(oneCallUrl);
@@ -173,7 +166,6 @@ const fetchWeather = async (lat, lon, locationName = 'Ubicación') => {
     console.warn('Error en OneCall API:', error);
   }
 
-  // Fallback a APIs Estándar
   try {
     const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&lang=es&appid=${API_KEY}`;
     const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&lang=es&appid=${API_KEY}`;
@@ -569,16 +561,36 @@ function DetailScreen({ route, navigation }) {
           <Text style={styles.comunidadName}>{municipio.Comunidad}</Text>
         </View>
 
-        {/* Mapa Web */}
+        {/* Mapa */}
         <View style={styles.mapCard}>
-          <WebView
-            style={styles.map}
-            source={{ 
-              uri: `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=15/${latitude}/${longitude}` 
-            }}
-            domStorageEnabled={true}
-            javaScriptEnabled={true}
-          />
+          {Platform.OS === 'web' ? (
+            <WebView
+              style={styles.map}
+              source={{ 
+                uri: `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=15/${latitude}/${longitude}` 
+              }}
+              domStorageEnabled={true}
+              javaScriptEnabled={true}
+            />
+          ) : (
+            <MapView
+              style={styles.map}
+              initialRegion={{
+                latitude: latitude,
+                longitude: longitude,
+                latitudeDelta: 0.03,
+                longitudeDelta: 0.03,
+              }}
+              scrollEnabled={true}
+              zoomEnabled={true}
+            >
+              <Marker
+                coordinate={{ latitude, longitude }}
+                title={municipio.Población}
+                description={`${municipio.Provincia}, ${municipio.Comunidad}`}
+              />
+            </MapView>
+          )}
         </View>
 
         {/* Población */}
