@@ -563,7 +563,13 @@ function DetailScreen({ route, navigation }) {
         </View>
 
         <View style={styles.mapCard}>
-          {Platform.OS === 'web' || !MapView || !Marker ? (
+          {Platform.OS === 'web' ? (
+            <iframe
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=${longitude-0.005}%2C${latitude-0.005}%2C${longitude+0.005}%2C${latitude+0.005}&layer=mapnik&marker=${latitude}%2C${longitude}`}
+              style={{ width: '100%', height: '100%', border: 0 }}
+              title="Mapa del Municipio"
+            />
+          ) : (!MapView || !Marker ? (
             <WebView
               style={styles.map}
               source={{ 
@@ -590,7 +596,7 @@ function DetailScreen({ route, navigation }) {
                 description={`${municipio.Provincia}, ${municipio.Comunidad}`}
               />
             </MapView>
-          )}
+          ))}
         </View>
 
         <View style={styles.infoCard}>
