@@ -20,7 +20,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { WebView } from 'react-native-webview';
-import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 
 const API_KEY = 'bb2977856afbad78594fc37dfa819fa6';
@@ -520,6 +519,18 @@ function DetailScreen({ route, navigation }) {
   const latitude = useMemo(() => parseCoordinate(municipio.Latitud), [municipio.Latitud]);
   const longitude = useMemo(() => parseCoordinate(municipio.Longitud), [municipio.Longitud]);
 
+  const Maps = useMemo(() => {
+    if (Platform.OS === 'web') return null;
+    try {
+      return require('react-native-maps');
+    } catch (e) {
+      return null;
+    }
+  }, []);
+
+  const MapView = Maps?.default || Maps;
+  const Marker = Maps?.Marker;
+
   const formatNumber = (num) => {
     if (num === undefined || num === null) return '0';
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -552,7 +563,7 @@ function DetailScreen({ route, navigation }) {
         </View>
 
         <View style={styles.mapCard}>
-          {Platform.OS === 'web' ? (
+          {Platform.OS === 'web' || !MapView || !Marker ? (
             <WebView
               style={styles.map}
               source={{ 
